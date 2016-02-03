@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Correctness - Demo</title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.1.1/foundation.min.css" />
+  <link rel="stylesheet" type="text/css" href="mod-form.css" />
+  <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+  <div class="page-wrap">
+    <form>
+      <div class="mod-form-wrapper">
+        <div class="mod-form-box">
+          <h5>Name</h5>
+          <fieldset>
+            <label>Title</label>
+            <select>
+              <option value="Select One" style="opacity:0.4;" selected="selected">Select One</option>
+              <option value="mr">Mr</option>
+              <option value="mrs">Mrs</option>
+              <option value="miss">Miss</option>
+              <option value="ms">Ms</option>
+              <option value="sir">Sir</option>
+              <option value="lord">Lord</option>
+              <option value="dane">Dane</option>
+            </select>
+          </fieldset>
+          <fieldset>
+            <label>First Name</label>
+            <input class="correctme" data-rule="-n-s-e" type="text" name="forename" placeholder="First Name" />
+            <div class="errMessage">
+              <p>
+                Names cannot contain numbers or spaces.
+              </p>
+            </div>
+          </fieldset>
+          <fieldset>
+            <label>Surname</label>
+            <input class="correctme" data-rule="-n-s-e" type="text" name="surname" placeholder="Surname" />
+            <div class="errMessage">
+              <p>
+                Names cannot contain numbers or spaces.
+              </p>
+            </div>
+          </fieldset>
+        </div><div class="mod-form-box">
+          <h5>Address</h5>
+          <fieldset>
+            <label>House Name/Number</label>
+            <input class="correctme" data-rule="-s-e" type="text" name="housenum" placeholder="House Number" />
+            <div class="errMessage">
+              <p>
+                House numbers must only be a number and names must only be letters.
+              </p>
+            </div>
+          </fieldset>
+          <fieldset>
+            <label>Address</label>
+            <input class="correctme" data-rule="-e" type="text" name="address" placeholder="Address" />
+            <div class="errMessage">
+              <p>
+                Street names cannot contain numbers.
+              </p>
+            </div>
+          </fieldset>
+          <fieldset>
+            <label>Postcode</label>
+            <input class="correctme" data-rule="-e" type="text" name="postcode" placeholder="P0ST C0D3" />
+            <div class="errMessage">
+              <p>
+                Postcodes must be alpha-numeric.
+              </p>
+            </div>
+          </fieldset>
+        </div><div class="mod-form-box">
+          <h5>Details</h5>
+          <fieldset>
+            <label>Email</label>
+            <input class="correctme" data-rule="email" type="text" name="email" placeholder="example@domain.com" />
+            <div class="errMessage">
+              <p>
+                Emails must have an @ symbol followed by a domain and extension e.g. 'example@domain.com'.
+              </p>
+            </div>
+          </fieldset>
+          <fieldset>
+            <label>Phone Number</label>
+            <input class="correctme" data-rule="-l-e" type="text" name="phonenumber" placeholder="01234 567 890" />
+            <div class="errMessage">
+              <p>
+                Phone numbers should only consist of numbers.
+              </p>
+            </div>
+          </fieldset>
+          <input type="submit" class="subBttn correctme-submit" value="Register" />
+        </div>
+      </div>
+    </form>
+  </div>
+  <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+  <script src="../dev-correctness.js"></script>
+  <script>
+    $(document).ready(function(){
+      correctness_init();
+    });
+  </script>
+</body>
+</html>
