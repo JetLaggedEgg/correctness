@@ -18,12 +18,12 @@ function correctness_init() {
   // Map fields.
   iss.exploreInputs();
   //Place event watcher on fields.
-  $('.correctme').blur(function(){
+  $('.correctme').change(function(){
     var inputName = $(this).attr('name');
     var inputValu = $(this).val();
     var inputRule = $(this).data('rule');
     // Validate.
-    if(iss.validate(inputValu, inputRule)) {
+    if(iss.validate(inputValu, inputRule) && iss.isNum($(this), inputValu)) {
       vss.makeThisGreen(this);
     } else {
       vss.makeThisRed(this);
@@ -107,8 +107,16 @@ var iss = {
     return false;
   },
 
+  isNum : function(that, str){
+    if(that.attr('type') == 'number') {
+      return iss.validateNum(that, str);
+    } else {
+      return true;
+    }
+  },
+
   validate : function(str, rule) {
-    if (str) {
+    if(str) {
       for (var y = 0; y < rules.length; y++) {
         if(rule.indexOf(rules[y][0]) >= 0) {
           var l = rules[y][1];
@@ -121,10 +129,32 @@ var iss = {
     } else {
       return true;
     }
+  },
+
+  validateNum : function(that, str) {
+    if(str) {
+      if(that.data('maxNum') != '') {
+        var input = +that.val();
+        var maxRule = +that.attr('data-maxNum');
+        if(input > maxRule) {
+          return false;
+        }
+      }
+      if(that.data('minNum') != '') {
+        var input = +that.val();
+        var minRule = +that.attr('data-minNum');
+        if(input < minRule) {
+          return false;
+        }
+      }
+      return true;
+    } else {
+      return true;
+    }
   }
 
 };
 
 var correctness = {
-  version : "0.1.3"
+  version : "0.1.4"
 };

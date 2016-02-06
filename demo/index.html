@@ -44,6 +44,15 @@
               </p>
             </div>
           </fieldset>
+          <fieldset>
+            <label>Age </label>
+            <input class="correctme" data-rule="-l-s-e" data-maxNum="99" data-minNum="18" type="number" name="age" placeholder="Age" />
+            <div class="errMessage">
+              <p>
+                You must be over 18 years old.
+              </p>
+            </div>
+          </fieldset>
         </div><div class="mod-form-box">
           <h5>Address</h5>
           <fieldset>
@@ -99,7 +108,7 @@
     </form>
   </div>
   <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
-  <script src="../dev-correctness.js"></script>
+  <script src="../correctness.min.js"></script>
   <script>
     $(document).ready(function(){
       correctness_init();
