@@ -31,6 +31,7 @@
 .mod-form-wrapper input[type="text"],
 .mod-form-wrapper input[type="password"],
 .mod-form-wrapper input[type="email"],
+.mod-form-wrapper input[type="number"],
 .mod-form-wrapper select {
   color: #2B2B2B;
   height: 47px;

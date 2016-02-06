@@ -19,13 +19,13 @@ function correctness_init() {
   // Map fields.
   iss.exploreInputs();
   //Place event watcher on fields.
-  $('.correctme').blur(function(){
+  $('.correctme').change(function(){
     var inputName = $(this).attr('name');
     console.log('====== Blurred '+inputName+' ======');
     var inputValu = $(this).val();
     var inputRule = $(this).data('rule');
     // Validate.
-    if(iss.validate(inputValu, inputRule)) {
+    if(iss.validate(inputValu, inputRule) && iss.isNum($(this), inputValu)) {
       vss.makeThisGreen(this);
     } else {
       vss.makeThisRed(this);
@@ -122,8 +122,16 @@ var iss = {
     return false;
   },
 
+  isNum : function(that, str){
+    if(that.attr('type') == 'number') {
+      return iss.validateNum(that, str);
+    } else {
+      return true;
+    }
+  },
+
   validate : function(str, rule) {
-    if (str) {
+    if(str) {
       console.log('Validating \''+str+'\'');
       for (var y = 0; y < rules.length; y++) {
         if(rule.indexOf(rules[y][0]) >= 0) {
@@ -135,6 +143,36 @@ var iss = {
         }
       }
       console.log('Passed validation.');
+      return true;
+    } else {
+      return true;
+    }
+  },
+
+  validateNum : function(that, str) {
+    if(str) {
+      console.log(that.attr('type'));
+      if(that.data('maxNum') != '') {
+        console.log('Has maxNum val.');
+        var input = +that.val();
+        var maxRule = +that.attr('data-maxNum');
+        console.log(typeof(input)+' '+input+' '+typeof(maxRule)+' '+maxRule);
+        if(input > maxRule) {
+          console.log('This number is too big.');
+          return false;
+        }
+      }
+      if(that.data('minNum') != '') {
+        console.log('Has minNum val.');
+        var input = +that.val();
+        var minRule = +that.attr('data-minNum');
+        console.log(typeof(input)+' '+input+' '+typeof(minRule)+' '+maxRule);
+        if(input < minRule) {
+          console.log('This number is too small.');
+          return false;
+        }
+      }
+      console.log('Has no num val.');
       return true;
     } else {
       return true;
