@@ -10,9 +10,7 @@ var correctness = function() {
   this.settings = {
     formBody : '.form-wrapper',
     formInputs : '.correctme',
-    formSubmit : '.correctme-submit',
-    invalidInput : '',
-    invalidSubmit : ''
+    formSubmit : '.correctme-submit'
   };
   // Rules.
   this.rules = [
@@ -47,33 +45,55 @@ var correctness = function() {
       switch ($(this).attr('type')) {
         case 'text':
           if(mast.validate.str($(this).val(), $(this).data('rule'))) {
-            mast.ui.green($(this));
             mast.map.set($(this).attr('name'), true);
-            mast.map.check();
+            if(mast.settings.onValid) {
+              mast.settings.onValid();
+            } else {
+              mast.ui.green($(this));
+            }
           } else {
-            mast.ui.red($(this));
             mast.map.set($(this).attr('name'), false);
+            if(mast.settings.onInvalid) {
+              mast.settings.onInvalid();
+            } else {
+              mast.ui.red($(this));
+            }
           }
           mast.map.check();
           break;
         case 'number':
           if(mast.validate.num($(this).val(), $(this).attr('data-maxNum'), $(this).attr('data-minNum'))) {
-            mast.ui.green($(this));
             mast.map.set($(this).attr('name'), true);
-            mast.map.check();
+            if(mast.settings.onValid) {
+              mast.settings.onValid();
+            } else {
+              mast.ui.green($(this));
+            }
           } else {
-            mast.ui.red($(this));
             mast.map.set($(this).attr('name'), false);
+            if(mast.settings.onInvalid) {
+              mast.settings.onInvalid();
+            } else {
+              mast.ui.red($(this));
+            }
           }
           mast.map.check();
           break;
         case 'email':
           if(mast.validate.email($(this).val())) {
-            mast.ui.green($(this));
             mast.map.set($(this).attr('name'), true);
+            if(mast.settings.onValid) {
+              mast.settings.onValid();
+            } else {
+              mast.ui.green($(this));
+            }
           } else {
-            mast.ui.red($(this));
             mast.map.set($(this).attr('name'), false);
+            if(mast.settings.onInvalid) {
+              mast.settings.onInvalid();
+            } else {
+              mast.ui.red($(this));
+            }
           }
           mast.map.check();
           break;
@@ -144,10 +164,10 @@ var correctness = function() {
       if(str){
         console.log('testing '+(+str)+' to '+(+max)+' or '+(+min));
         if(max) {
-          if(+str < +max){}else{return false}
+          if(+str <= +max){}else{return false}
         }
         if(min) {
-          if(+str > +min){}else{return false}
+          if(+str >= +min){}else{return false}
         }
         return true;
       }

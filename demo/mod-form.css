@@ -37,7 +37,7 @@
   height: 47px;
   width: 90%;
   border-radius: 4px;
-  border: 1px solid #999AA1;
+  border: 1px solid rgab(0,0,0,0);
   margin: 5px auto;
   transition: border-color 0.3s;
   max-width: 320px;
@@ -97,6 +97,16 @@
   cursor: pointer;
   transition: box-shadow 0.3s, background-color 0.3s, color 0.3s;
   background-color: #FF8E01;
+  color: #FFFFFF;
+}
+
+.subBttn:hover, .subBttn:focus {
+  background-color: #a25a00;
+  box-shadow: 0 0 0 0 rgba(0,0,0,0);
+  color: #a7a7a7;
+}
+
+.subBttn:active {
   color: #FFFFFF;
 }
 
