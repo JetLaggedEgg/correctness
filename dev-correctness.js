@@ -10,7 +10,13 @@ var correctness = function() {
   this.settings = {
     formBody : '.form-wrapper',
     formInputs : '.correctme',
-    formSubmit : '.correctme-submit'
+    formSubmit : '.correctme-submit',
+    onValid : function(input) {
+      input.css('border','initial');
+    },
+    onInvalid : function(input) {
+      input.css('border','1px solid #FF0000');
+    }
   };
   // Rules.
   this.rules = [
@@ -46,54 +52,30 @@ var correctness = function() {
         case 'text':
           if(mast.validate.str($(this).val(), $(this).data('rule'))) {
             mast.map.set($(this).attr('name'), true);
-            if(mast.settings.onValid) {
-              mast.settings.onValid();
-            } else {
-              mast.ui.green($(this));
-            }
+            mast.settings.onValid($(this))
           } else {
             mast.map.set($(this).attr('name'), false);
-            if(mast.settings.onInvalid) {
-              mast.settings.onInvalid();
-            } else {
-              mast.ui.red($(this));
-            }
+            mast.settings.onInvalid($(this))
           }
           mast.map.check();
           break;
         case 'number':
           if(mast.validate.num($(this).val(), $(this).attr('data-maxNum'), $(this).attr('data-minNum'))) {
             mast.map.set($(this).attr('name'), true);
-            if(mast.settings.onValid) {
-              mast.settings.onValid();
-            } else {
-              mast.ui.green($(this));
-            }
+            mast.settings.onValid($(this));
           } else {
             mast.map.set($(this).attr('name'), false);
-            if(mast.settings.onInvalid) {
-              mast.settings.onInvalid();
-            } else {
-              mast.ui.red($(this));
-            }
+            mast.settings.onInvalid($(this))
           }
           mast.map.check();
           break;
         case 'email':
           if(mast.validate.email($(this).val())) {
             mast.map.set($(this).attr('name'), true);
-            if(mast.settings.onValid) {
-              mast.settings.onValid();
-            } else {
-              mast.ui.green($(this));
-            }
+            mast.settings.onValid($(this))
           } else {
             mast.map.set($(this).attr('name'), false);
-            if(mast.settings.onInvalid) {
-              mast.settings.onInvalid();
-            } else {
-              mast.ui.red($(this));
-            }
+            mast.settings.onInvalid($(this))
           }
           mast.map.check();
           break;
@@ -101,20 +83,6 @@ var correctness = function() {
          console.warn('Input type not recognised:'+$(this).attr('name')+'\s type of \''+$(this).attr('type')+'\'');
       }
     });
-  };
-  // UI interaction unit.
-  this.ui = {
-    red : function(that) {
-      if(mast.settings.invalidInput){
-        console.log('Making red.');
-        that.toggleClass('invalid');
-      } else {
-        that.css('border','1px solid #FF0000');
-      }
-    },
-    green : function(that) {
-      that.css('border','initial');
-    }
   };
   // Input map unit.
   this.map = {
