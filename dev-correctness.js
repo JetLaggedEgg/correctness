@@ -156,7 +156,6 @@ var correctness = function() {
       return true;
     },
     email : function (str) {
-      // Email reg exp. Change to a more complex one if you wish.
       var reg = /.+@.+\..+/i;
       if(str) {
         if(reg.test(str)) return true;
@@ -165,6 +164,4 @@ var correctness = function() {
       return true;
     }
   };
-
-
 };

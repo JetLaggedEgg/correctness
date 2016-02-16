@@ -1,160 +1,160 @@
-// Correctness ~ by Daniel Sarracayo :)
-// Call 'correctness_init();' to initiate, best done on page-load.
-// Add rules as needed.
-// [ 'Flag to trigger check' , /Regex rule to match to/ , flag to give if match is true to regex].
+// Correctness 0.2.0.
+// Instantiate your own correctness object and feed it your settings.
+var correctness = function() {
 
-"use strict";
+  // Master variables - allows hoisting.
+  var mast = this;
+  var sets = this.settings;
 
-var rules = [
-  ['-l',/[a-zA-Z]/,true],
-  ['-n',/[0-9]/,true],
-  ['-s',/[ ]/,true],
-  ['-e',/[^a-zA-Z0-9 \'-]/,true],
-  ['email',/.+@.+\..+/i,false]
-];
-
-// Initialisation.
-function correctness_init() {
-  // Map fields.
-  iss.exploreInputs();
-  //Place event watcher on fields.
-  $('.correctme').change(function(){
-    var inputName = $(this).attr('name');
-    var inputValu = $(this).val();
-    var inputRule = $(this).data('rule');
-    // Validate.
-    if(iss.validate(inputValu, inputRule) && iss.isNum($(this), inputValu)) {
-      vss.makeThisGreen(this);
-    } else {
-      vss.makeThisRed(this);
+  // Master settings - with defaults.
+  this.settings = {
+    formBody : '.form-wrapper',
+    formInputs : '.correctme',
+    formSubmit : '.correctme-submit',
+    onValid : function(input) {
+      input.css('border','initial');
+    },
+    onInvalid : function(input) {
+      input.css('border','1px solid #FF0000');
     }
-  });
-}
-
-// View services.
-var inputs = $('.correctme').length;
-var vss = {
-
-  makeThisRed : function(that) {
-    // What to do when input goes red.
-    var iName= $(that).attr('name');
-    var iIndex = iss.getFor(iName,'index');
-    // Parent changes.
-    $('.correctme').eq(iIndex).parent().addClass('invalidInput');
-    $('.correctme').eq(iIndex).css('border','1px solid #FF0000');
-    // Add to invalid list.
-    iss.setFor(iName,false);
-    $('.correctme-submit').addClass('untouchable');
-  },
-
-  makeThisGreen : function(that) {
-    // What to do when input goes red.
-    var iName= $(that).attr('name');
-    var iIndex = iss.getFor(iName,'index');
-    // Parent changes.
-    $('.correctme').eq(iIndex).parent().removeClass('invalidInput');
-    $('.correctme').eq(iIndex).css('border','1px solid #999AA1');
-    // Add to invalid list.
-    iss.setFor(iName,true);
-    if (iss.checkInputs()) $('.correctme-submit').removeClass('untouchable');
-  }
-
-};
-
-// Input services.
-var inputMap = [];
-var iss = {
-
-  exploreInputs : function() {
-    $('.correctme').each(function(){
-      inputMap.push([$(this).attr('name'),true]);
-    });
-  },
-
-  checkInputs : function() {
-    for(var i = 0;i < inputMap.length;i++) {
-      if(inputMap[i][1] === false) {
-        return false;
+  };
+  // Rules.
+  this.rules = [
+    ['-l',/[a-zA-Z]/,true],
+    ['-n',/[0-9]/,true],
+    ['-s',/[ ]/,true],
+    ['-e',/[^a-zA-Z0-9 \'-]/,true],
+    ['email',/.+@.+\..+/i,false]
+  ];
+  // Initialisation.
+  this.init = function(news) {
+    // Check for news.
+    if(news) mast.import(news);
+    // Find all inputs.
+    mast.map.get();
+    // Setup validation handlers.
+    mast.assign();
+  };
+  // Settings import.
+  this.import = function(news) {
+    for(var i in news) {
+      // Scan and replace if key exists in settings.
+      if(mast.settings[i]) mast.settings[i] = news[i];
+    }
+  };
+  // Assign click.
+  this.assign = function () {
+    $(mast.settings.formBody).find(mast.settings.formInputs).change(function() {
+      switch ($(this).attr('type')) {
+        case 'text':
+          if(mast.validate.str($(this).val(), $(this).data('rule'))) {
+            mast.map.set($(this).attr('name'), true);
+            mast.settings.onValid($(this))
+          } else {
+            mast.map.set($(this).attr('name'), false);
+            mast.settings.onInvalid($(this))
+          }
+          mast.map.check();
+          break;
+        case 'number':
+          if(mast.validate.num($(this).val(), $(this).attr('data-maxNum'), $(this).attr('data-minNum'))) {
+            mast.map.set($(this).attr('name'), true);
+            mast.settings.onValid($(this));
+          } else {
+            mast.map.set($(this).attr('name'), false);
+            mast.settings.onInvalid($(this))
+          }
+          mast.map.check();
+          break;
+        case 'email':
+          if(mast.validate.email($(this).val())) {
+            mast.map.set($(this).attr('name'), true);
+            mast.settings.onValid($(this))
+          } else {
+            mast.map.set($(this).attr('name'), false);
+            mast.settings.onInvalid($(this))
+          }
+          mast.map.check();
+          break;
+        default:
+         console.warn('Input type not recognised:'+$(this).attr('name')+'\s type of \''+$(this).attr('type')+'\'');
       }
+    });
+  };
+  // Input map unit.
+  this.map = {
+    cache : [],
+    get : function() {
+      $(mast.settings.formInputs).each(function(){
+        mast.map.cache.push([$(this).attr('name'),true]);
+      });
+    },
+    check : function() {
+      var submitBttn = $(mast.settings.formBody).find(mast.settings.formSubmit);
+      for(var i = 0;i < mast.map.cache.length;i++) {
+        if(mast.map.cache[i][1] == false) {
+          if(mast.settings.invalidSubmit) {
+            submitBttn.addClass(mast.settings.invalidSubmit);
+          } else {
+            submitBttn.css('opacity','0.4');
+            submitBttn.css('pointer-events','none');
+          }
+          return false;
+        }
+      }
+      if(mast.settings.invalidSubmit){
+        submitBttn.removeClass(mast.settings.invalidSubmit);
+      } else {
+        submitBttn.css('opacity','1');
+        submitBttn.css('pointer-events','auto');
+      }
+      return true;
+    },
+    set : function(row, value) {
+      for(var i = 0;i < mast.map.cache.length;i++) {
+        if(mast.map.cache[i][0] == row) {
+          mast.map.cache[i][1] = value;
+          return true;
+        }
+      }
+      return false;
     }
-    return true;
-  },
-
-  setFor : function(rowName, value) {
-    for(var i = 0;i < inputMap.length;i++) {
-      if(inputMap[i][0] == rowName) {
-        inputMap[i][1] = value;
+  };
+  // Validation unit.
+  this.validate = {
+    num : function (str, max, min) {
+      if(str){
+        if(max) {
+          if(+str <= +max){}else{return false}
+        }
+        if(min) {
+          if(+str >= +min){}else{return false}
+        }
         return true;
       }
-    }
-  },
-
-  getFor : function(rowName, form) {
-    for(var i = 0;i < inputMap.length;i++) {
-      if (inputMap[i][0] == rowName) {
-        switch (form) {
-          case 'name':
-            return inputMap[i][0];
-          case 'index':
-            return i;
-          case 'value':
-            return inputMap[i][1];
-          default:
-            return true;
-        }
-      }
-    }
-    return false;
-  },
-
-  isNum : function(that, str){
-    if(that.attr('type') == 'number') {
-      return iss.validateNum(that, str);
-    } else {
       return true;
-    }
-  },
-
-  validate : function(str, rule) {
-    if(str) {
-      for (var y = 0; y < rules.length; y++) {
-        if(rule.indexOf(rules[y][0]) >= 0) {
-          var l = rules[y][1];
-          if (l.test(str) == rules[y][2]) {
-            return false;
+    },
+    str : function (str, rule) {
+      if(str) {
+        for (var y = 0; y < mast.rules.length; y++) {
+          if(rule.indexOf(mast.rules[y][0]) >= 0) {
+            var l = mast.rules[y][1];
+            if (l.test(str) == mast.rules[y][2]) {
+              return false;
+            }
           }
         }
+        return true;
       }
       return true;
-    } else {
+    },
+    email : function (str) {
+      var reg = /.+@.+\..+/i;
+      if(str) {
+        if(reg.test(str)) return true;
+        return false;
+      }
       return true;
     }
-  },
-
-  validateNum : function(that, str) {
-    if(str) {
-      if(that.data('maxNum') != '') {
-        var input = +that.val();
-        var maxRule = +that.attr('data-maxNum');
-        if(input > maxRule) {
-          return false;
-        }
-      }
-      if(that.data('minNum') != '') {
-        var input = +that.val();
-        var minRule = +that.attr('data-minNum');
-        if(input < minRule) {
-          return false;
-        }
-      }
-      return true;
-    } else {
-      return true;
-    }
-  }
-
-};
-
-var correctness = {
-  version : "0.1.4"
+  };
 };
