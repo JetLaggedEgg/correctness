@@ -5,6 +5,8 @@ A frontend javascript validation library.
 
 correctness is a frontend validation library that makes setting up validation easy. My goal is to reduces hits on servers by reducing the number of repeated submits.
 
+## Note: This currently outdated - it will be update for the new version of correctness soon (0.2.0).
+
 **Notes:**
 * This currently uses jQuery 1.2.1 but has no definitive need to do so, I plan to build a non-jQuery version as and when I have time.
 * I will keep adding information to this page. (When I get time! :S)
