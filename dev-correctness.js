@@ -80,7 +80,7 @@ var correctness = function() {
           mast.map.check();
           break;
         default:
-         console.warn('Input type not recognised:'+$(this).attr('name')+'\s type of \''+$(this).attr('type')+'\'');
+         console.warn('Input type ignored or not in dictionary:\''+$(this).attr('type')+'\'');
       }
     });
   };
