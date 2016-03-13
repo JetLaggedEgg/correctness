@@ -9,7 +9,7 @@
 </head>
 <body>
   <div class="page-wrap">
-    <form>
+    <form id='form1'>
       <div class="mod-form-wrapper">
         <div class="mod-form-box">
           <h5>Name</h5>
@@ -46,7 +46,7 @@
           </fieldset>
           <fieldset>
             <label>Age </label>
-            <input class="correctme" data-rule="-l-s-e" data-maxNum="99" data-minNum="18" type="number" name="age" placeholder="Age" />
+            <input class="correctme" data-maxNum="99" data-minNum="18" type="number" name="age" placeholder="Age" />
             <div class="errMessage">
               <p>
                 You must be over 18 years old.
@@ -57,7 +57,7 @@
           <h5>Address</h5>
           <fieldset>
             <label>House Name/Number</label>
-            <input class="correctme" data-rule="-s-e" type="text" name="housenum" placeholder="House Number" />
+            <input class="correctme" data-rule="-e" type="text" name="housenum" placeholder="House Number" />
             <div class="errMessage">
               <p>
                 House numbers must only be a number and names must only be letters.
@@ -86,7 +86,7 @@
           <h5>Details</h5>
           <fieldset>
             <label>Email</label>
-            <input class="correctme" data-rule="email" type="text" name="email" placeholder="example@domain.com" />
+            <input class="correctme" type="email" name="email" placeholder="example@domain.com" />
             <div class="errMessage">
               <p>
                 Emails must have an @ symbol followed by a domain and extension e.g. 'example@domain.com'.
@@ -111,7 +111,21 @@
   <script src="../correctness.min.js"></script>
   <script>
     $(document).ready(function(){
-      correctness_init();
+      // New a correctness here.
+      var form1 = new correctness();
+      form1.init({
+        formBody : '#form1',
+        formInputs: '.correctme',
+        formSubmit: '.correctme-submit',
+        onInvalid: function(input) {
+          input.css('border','1px solid #FF0000');
+          input.parent().addClass('invalidInput');
+        },
+        onValid: function(input) {
+          input.css('border','initial');
+          input.parent().removeClass('invalidInput');
+        }
+      });
     });
   </script>
 </body>

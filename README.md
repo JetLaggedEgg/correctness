@@ -1,112 +1,99 @@
-# correctness
-A frontend javascript validation library.
+# Correctness - 0.2.0
 
-## Introduction
+### Introduction
 
-correctness is a frontend validation library that makes setting up validation easy. My goal is to reduces hits on servers by reducing the number of repeated submits.
+###### What is Correctness?
 
-**Notes:**
-* This currently uses jQuery 1.2.1 but has no definitive need to do so, I plan to build a non-jQuery version as and when I have time.
-* I will keep adding information to this page. (When I get time! :S)
+Correctness is a frontend website validation library that makes it easy to setup client-side form validation.
 
-I plan to add a lot to the library but here is what it has to offer so far.
+###### So why validate?
 
-* Input Validation
-* Anti-submit
-* Error Messages (under reconstruction for v0.1.5).
+Validating forms ensures data is accurate and legitimate, validation is recommended on the server side of a website but to reduce un-needed invalid requests, frontend validation is the answer. My need for this library was to have a reusable and expandable code base that I could use for all validation and tweak if needed.
 
-### Input Validation
+### Usage
 
-There are two main branches of validation in this library. String and Numbers.
+#### Initialisation
 
-All input values are read as strings but if the input type is a number then the value is converted into an integer.
+In order to Initialise the library you must simple create instances of the `Correctness` object like so.
 
-I plan to change the system to automatically not accept text in a number input field but for now you must also specify the `data-rule` to be `-l-e` and also `-s` if the number is not expected to have spaces.
+    var form1 = new Correctness;
 
-#### String Validation
+I would recommend making a new instance for each form.
 
-String validations are requested by using the `data-rule` attribute. It tell correctness what is not allowed - there need to be looked for in the string. The example below shows a text input with a rule that disallows spaces `-s` and numbers `-n`.
+The next thing to do is give the new object settings to follow. Here is an example:
 
-    <input class="correctme" data-rule"-s-n" type="text" name="surname" />
+    form1.init({
+      formBody : '#form1',
+      formInputs: '.form-input',
+      formSubmit: '.form-submit',
+      onInvalid: function() {
+        // Do something when an input is invalid.
+      },
+      onValid: function() {
+        // Do something when an input is valid.
+      }
+    });
 
-###### Built in rules
+This is an object with all settings available at the moment being set. This is done by calling `init` under `form1`.
 
-These are the following rules you can parse:
+#### Settings
 
-Name|Tag|Description
-----|---|-----------
-Letters|`-l`|Will fails if there any letters of any case are found. (`a-z` and `A-Z`)
-Numbers|`-n`|The numbers flag disallows all digits, 0 to 9.
-Spaces|`-s`|Will fail if spaces are found in the string.
-Extras|`-e`|This will fail if the string contains anything other than the following: (`a-z` `A-Z` `0-9` `'` `-`)
-Email|`email`|This is a special flag **to be used by itself only**, it validates that an email has any text before an `@`(at sign) then any text after it, followed by a `.`(period) then any text after that.
+These are the variables that are settable so far. Any settings that aren't specified will be defaulted to built in ones.
 
-###### Structure of Rules
+These the defaults:
 
-All rules are store in an global array. The array of built in rules looks like this:
+    this.settings = {
+      formBody : '.form-wrapper',
+      formInputs : '.correctme',
+      formSubmit : '.correctme-submit',
+      onValid : function(input) {
+        input.css('border','initial');
+      },
+      onInvalid : function(input) {
+        input.css('border','1px solid #FF0000');
+      }
+    };
 
-    var rules = [
-      ['-l',/[a-zA-Z]/,true],
-      ['-n',/[0-9]/,true],
-      ['-s',/[ ]/,true],
-      ['-e',/[^a-zA-Z0-9 \'-]/,true],
-      ['email',/.+@.+\..+/i,false]
-    ];
+###### formBody
 
-Each rule is a sub array of `rules` and each has 3 variables within them.
+A specified ID or Class selector for the parent form element.
 
-This is the structure of each rule:
+`.formClass` is a class selector - preceded by a period `.`.
 
-Index|Name|Description
----|---|---
-0|Flag|This is the string that is searched for in each input's `data-rule`, if it exists, the input value is test against the regex.
-1|Regex|This is the regex that is used to test the input value against. It will give an output of true or false when used in testing.
-2|Fail Value|This is the value that regex is expected to give out if the input value fails. So for `-l` if it's regex finds `a-z` or `A-Z` characters it will say true, then if the fail value is equal to what the regex said, it will flag a fail for the input being tested overall.
+`#formID` is an ID selector - preceded by a pound sign `#`.
 
-###### Custom Rules
+The `formBody` variable dictates what form element is being targeted - thus this is the most important variable. It has a default of `.form-wrapper` and so if a form exists with that class it would be selected.
 
-In order to add your own rules I would recommend using the non-min version - for readability, if needed you can just minify it afterwards.
+###### formInputs
 
-*Notes:*
+A Class that is used to specify which inputs are to be validated.
 
-* All rules **but the last** must have a comma after them.
+`.correctme` is an example - only inputs with this class would be validated.
 
-* All rules must have a unique flag and one that does not contain another rule's flag e.g. if you make a new rule with a flag like `-log` then the letter rule `-l` is flagged also, even if not intended. My work around for this is to place an x before all custom rules, this way `-xlog` doesn't flag `-l`.
+ID's aren't recommended to select inputs as there is usually more than one and multiple identical ID's aren't HTML compliant.
 
-* I plan to build a way to split custom rules and common rules, meaning you'll be able to name the anything you wish.
+###### formSubmit
 
-#### Number Validation
+A selector for the submit button of a form.
 
-Number validation is new in 0.1.4, it bring the ability to set a maximum and minimum range on number type fields.
+`.correctme-submit` is an example.
 
-Number fields should have the following rule, unfortunately this is not automatically set yet.
+This selector is used to add the class `untouchable` to the submit button when a input is marked invalid - only when all inputs have a valid value does the class get removed from the button.
 
-`data-rule="-l-s-e"`
+I plan to add the ability to specify what happens when an input becomes invalid soon.
 
-###### Attributes Available
+###### onInvalid and onValid
 
-Name|Syntax|Description
----|---|--
-maxNum|`maxNum="99"`|The input value would be fail if it is larger than this attribute.
-minNum|`minNum="18"`|The input value would fail if it is smaller than this.
+These are functions that can be specified. They are fired when an input becomes valid or invalid respectively and are parsed the input that triggered it.
 
-### Anti-Submit
+`onValid` is triggered when an input becomes valid and is parsed the input.
 
-correctness can also control the submit button of a form, it looks for the class `correctme-submit` when validating inputs. If there is an input that is not valid, the submit button will have the class `untouchable` added to it.
+`onInvalid` is triggered when an input becomes invalid and is also parsed the input.
 
-The `mod-form.css` file in this repository contains this class with rules that disallow elements with `untouchable` to be touched.
+    onInvalid : function(parsedInput) {
+      console.log(parsedInput.attr('name'));
+    }
 
-### Error Messages
+The function above would console log the name attribute of the input that tirggered it.
 
-I built in an error message system but it's not yet elegant. This is what it looks like:
-
-    <fieldset>
-      <input class="correctme" data-rule="-s" name="example-text" />
-      <div class="errMessage">
-        <p>This is the error text. I will appear underneath the field and work on mobile!</p>
-      </div>
-    </fieldset>
-
-By default the `errMessage` div should be `display: none;` and when it is needed, the parent will be given the class `invalidInput` which triggers the errMessage to be `display: block;` and `absolute`, the fieldset being `relative` to contain it.
-
-At the moment most of this is driven by CSS which is better for speed but understandable more complicated as it adds another layer to this library.
+By default they access the parsed input and place a border relative to the situation on it. So for invalid a red border would be added and for valid a initial grey one would be added.
