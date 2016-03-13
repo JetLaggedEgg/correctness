@@ -49,10 +49,10 @@ var correctness = function() {
         case 'text':
           if(mast.validate.str($(this).val(), $(this).data('rule'))) {
             mast.map.set($(this).attr('name'), true);
-            mast.settings.onValid($(this))
+            mast.settings.onValid($(this));
           } else {
             mast.map.set($(this).attr('name'), false);
-            mast.settings.onInvalid($(this))
+            mast.settings.onInvalid($(this));
           }
           mast.map.check();
           break;
@@ -62,22 +62,22 @@ var correctness = function() {
             mast.settings.onValid($(this));
           } else {
             mast.map.set($(this).attr('name'), false);
-            mast.settings.onInvalid($(this))
+            mast.settings.onInvalid($(this));
           }
           mast.map.check();
           break;
         case 'email':
           if(mast.validate.email($(this).val())) {
             mast.map.set($(this).attr('name'), true);
-            mast.settings.onValid($(this))
+            mast.settings.onValid($(this));
           } else {
             mast.map.set($(this).attr('name'), false);
-            mast.settings.onInvalid($(this))
+            mast.settings.onInvalid($(this));
           }
           mast.map.check();
           break;
         default:
-         console.warn('Input type not recognised:'+$(this).attr('name')+'\s type of \''+$(this).attr('type')+'\'');
+         console.warn('Input type ignored or not in dictionary:\''+$(this).attr('type')+'\'');
       }
     });
   };
@@ -124,6 +124,7 @@ var correctness = function() {
   this.validate = {
     num : function (str, max, min) {
       if(str){
+        if(mast.validate.str(str, '-l-s-e')){}else{return false}
         if(max) {
           if(+str <= +max){}else{return false}
         }

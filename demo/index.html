@@ -108,13 +108,23 @@
     </form>
   </div>
   <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
-  <script src="../dev-correctness.js"></script>
+  <script src="../correctness.min.js"></script>
   <script>
     $(document).ready(function(){
       // New a correctness here.
       var form1 = new correctness();
       form1.init({
-        formBody : '#form1'
+        formBody : '#form1',
+        formInputs: '.correctme',
+        formSubmit: '.correctme-submit',
+        onInvalid: function(input) {
+          input.css('border','1px solid #FF0000');
+          input.parent().addClass('invalidInput');
+        },
+        onValid: function(input) {
+          input.css('border','initial');
+          input.parent().removeClass('invalidInput');
+        }
       });
     });
   </script>
